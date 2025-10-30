@@ -9,7 +9,7 @@
 {% for prop_id, path, user_id in proposals %}
 <div class="col-md-4 mb-3">
 <img src="{{ path }}" class="img-fluid" style="max-height:200px">
-<button onclick="approve({{prop_id}})" class="btn btn-success">✅ Одобрить</button>
+<button onclick="approve({prop_id})" class="btn btn-success">✅ Одобрить</button>
 </div>
 {% endfor %}
 </div>
