@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Bot Admin Panel</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5">
+<h1>🛡️ Админ Панель</h1>
+<div class="row">
+{% for prop_id, path, user_id in proposals %}
+<div class="col-md-4 mb-3">
+<img src="{{ path }}" class="img-fluid" style="max-height:200px">
+<button onclick="approve({{prop_id}})" class="btn btn-success">✅ Одобрить</button>
+</div>
+{% endfor %}
+</div>
+{% if graph %}<img src="{{ graph }}" class="img-fluid">{% endif %}
+<script>
+function approve(id) {
+fetch(`/admin/approve/${id}`).then(()=>location.reload());
+}
+</script>
+</body>
+</html>

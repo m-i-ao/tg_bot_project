@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+<h2>🎮 Mini App: Модерация</h2>
+<div id="proposals"></div>
+<button onclick="loadProposals()" class="btn btn-primary">Обновить</button>
+</div>
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+async function loadProposals() {
+const res = await fetch('/api/proposals');
+const props = await res.json();
+document.getElementById('proposals').innerHTML = props.map(p => `
+<div class="card">
+<img src="/${p[1]}" style="height:150px">
+<button onclick="approve(${p[0]})">✅</button>
+</div>`).join('');
+}
+loadProposals();
+</script>
+</body>
+</html>
