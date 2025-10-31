@@ -6,6 +6,8 @@ from utils.filters import file_passes_filters
 from tqdm import tqdm
 from utils.utils import download_file
 import config
+# download.py
+from utils.filters import file_passes_filters  # ← ДОЛЖНО РАБОТАТЬ
 
 async def download_channel_history(bot: Bot, chat_id: int, limit: int = 1000, output_dir: str = None):
     output_dir = output_dir or config.DOWNLOADS_DIR

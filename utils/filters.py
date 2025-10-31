@@ -2,6 +2,18 @@ import os
 from datetime import datetime, timedelta
 from utils.utils import is_image_nsfw, get_file_age_days
 import config
+from typing import List
+
+def file_passes_filters(filepath: str, allowed_extensions: List[str] = None) -> bool:
+    """
+    Проверяет, проходит ли файл по фильтрам.
+    Пока — просто проверка расширения.
+    """
+    if allowed_extensions is None:
+        allowed_extensions = ['.jpg', '.jpeg', '.png', '.mp4', '.pdf', '.docx']
+
+    ext = os.path.splitext(filepath)[1].lower()
+    return ext in allowed_extensions
 
 def apply_custom_filters(file_path: str, custom_filters: dict) -> bool:
     """
