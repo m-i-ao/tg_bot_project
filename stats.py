@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 from datetime import datetime, timedelta
-from db import get_conn
+from utils.db import get_conn
 import config
 
 def generate_stats_graph(output_path: str = None):

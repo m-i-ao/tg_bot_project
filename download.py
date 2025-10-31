@@ -1,10 +1,10 @@
 import os
 import asyncio
-import utils
+import utils.utils as utils
 from aiogram import Bot
 from utils.filters import file_passes_filters 
 from tqdm import tqdm
-from utils import download_file
+from utils.utils import download_file
 import config
 
 async def download_channel_history(bot: Bot, chat_id: int, limit: int = 1000, output_dir: str = None):

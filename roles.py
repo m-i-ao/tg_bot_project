@@ -1,4 +1,4 @@
-from db import get_user_role, set_user_role
+from utils.db import get_user_role, set_user_role
 import config
 
 def is_admin(user_id: int) -> bool:

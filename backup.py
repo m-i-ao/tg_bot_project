@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Bot
-from db import create_backup_record, get_active_backups, update_backup_last_id
+from utils.db import create_backup_record, get_active_backups, update_backup_last_id
 import config
 
 async def create_backup_channel(bot: Bot, title: str = "Backup Channel"):

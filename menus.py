@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from db import get_pending_proposals, update_proposal_status
+from utils.db import get_pending_proposals, update_proposal_status
 import config
 
 def get_main_menu(user_role: str):

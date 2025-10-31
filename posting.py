@@ -2,8 +2,8 @@ import os
 import asyncio
 from aiogram import Bot
 from aiogram.types import InputFile
-from utils import download_file, file_passes_filters
-from db import log_post
+from utils.utils import download_file, file_passes_filters
+from utils.db import log_post
 import config
 
 async def post_single_photo(bot: Bot, photo_path: str, chat_id: int = None):

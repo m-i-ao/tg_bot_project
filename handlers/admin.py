@@ -37,7 +37,7 @@ async def show_moderation(call: CallbackQuery):
 @router.callback_query(F.data.startswith("view_"))
 async def view_proposal(call: CallbackQuery):
     prop_id = int(call.data.split("_")[1])
-    from db import get_conn
+    from utils.db import get_conn
     conn = get_conn()
     c = conn.cursor()
     c.execute('SELECT file_path, user_id FROM proposals WHERE id = ?', (prop_id,))

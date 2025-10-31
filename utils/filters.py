@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from utils import is_image_nsfw, get_file_age_days
+from utils.utils import is_image_nsfw, get_file_age_days
 import config
 
 def apply_custom_filters(file_path: str, custom_filters: dict) -> bool:

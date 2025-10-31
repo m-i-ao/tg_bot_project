@@ -3,7 +3,7 @@ from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from aiogram import Bot
 import config
-from db import get_conn, get_pending_proposals, update_proposal_status
+from utils.db import get_conn, get_pending_proposals, update_proposal_status
 from stats import generate_stats_graph
 from posting import post_single_photo
 import os

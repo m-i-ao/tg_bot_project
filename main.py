@@ -2,9 +2,9 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-from db import init_db
-from handlers_user import router as user_router
-from handlers_admin import router as admin_router
+from utils.db import init_db
+from handlers.user import router as user_router
+from handlers.admin import router as admin_router
 from scheduler import start_scheduler
 import config
 
