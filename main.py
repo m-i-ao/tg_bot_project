@@ -1,64 +1,38 @@
+# main.py
 import asyncio
-import logging
+import threading
 from aiogram import Bot, Dispatcher
-from aiogram.fsm.storage.memory import MemoryStorage
-from utils.db import init_db
-from handlers.user import router as user_router
+from config import BOT_TOKEN
 from handlers.admin import router as admin_router
-from scheduler import start_scheduler
-import config
+from handlers.user import router as user_router
+from utils.db import init_db
+from roles import init_admin
+from web_app import run_flask
 
-# === Логирование ===
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Инициализация бота
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
 
-# === Запуск Flask (веб-панель + Mini App API) ===
-def run_flask():
-    from web_app import app
-    app.run(host='0.0.0.0', port=5000, use_reloader=False)
+# Подключение роутеров
+dp.include_router(admin_router)
+dp.include_router(user_router)
 
-# === Основная функция ===
-async def main():
-    # Инициализация бота
-    bot = Bot(token=config.BOT_TOKEN, parse_mode="HTML")
-    storage = MemoryStorage()
-    dp = Dispatcher(storage=storage)
-
-    # Подключение роутеров
-    dp.include_router(user_router)
-    dp.include_router(admin_router)
-
-    # Инициализация базы данных
+def main():
+    # 1. Сначала инициализируем БД
     init_db()
     print("База данных инициализирована")
 
-    # Запуск планировщика (бэкап, статистика, автопостинг)
-    start_scheduler(bot)
-    print("Планировщик запущен")
+    # 2. Потом — админа
+    init_admin()
 
-    # Запуск веб-панели в отдельном потоке
-    import threading
-    threading.Thread(target=run_flask, daemon=True).start()
+    # 3. Запускаем Flask в отдельном потоке
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
     print("Веб-панель запущена: http://localhost:5000")
 
-    # Удаление вебхука и запуск polling
-    await bot.delete_webhook(drop_pending_updates=True)
-    print("Бот запущен в режиме polling...")
+    # 4. Запускаем бота
+    print("Бот запущен...")
+    asyncio.run(dp.start_polling(bot))
 
-    # Основной цикл
-    try:
-        await dp.start_polling(bot)
-    except (KeyboardInterrupt, SystemExit):
-        print("Бот остановлен пользователем.")
-    finally:
-        await bot.session.close()
-        print("Сессия закрыта.")
-
-# === Запуск ===
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        print(f"Критическая ошибка: {e}")
+    main()

@@ -34,6 +34,15 @@ def init_db():
         )
     ''')
 
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            user_id INTEGER PRIMARY KEY,
+            role TEXT DEFAULT 'user',
+            username TEXT,
+            first_name TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     # Статистика просмотров (если доступно)
     c.execute('''
         CREATE TABLE IF NOT EXISTS stats (
