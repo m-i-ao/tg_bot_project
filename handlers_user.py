@@ -6,6 +6,7 @@ from utils import download_file
 from posting import post_single_photo
 import config
 import os
+from utils.db import update_proposal_status
 
 router = Router()
 
