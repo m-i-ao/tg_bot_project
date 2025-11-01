@@ -1,8 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
-from utils.db import add_proposal, get_user_role, set_user_role
-from utils.utils import download_file
+from db import add_proposal, get_user_role, set_user_role
+from utils import download_file
 from posting import post_single_photo
 import config
 import os
@@ -54,7 +54,7 @@ async def approve_proposal(call: CallbackQuery):
     prop_id = int(call.data.split("_")[1])
     update_proposal_status(prop_id, 'approved')
     # Найдём путь
-    from utils.db import get_conn
+    from db import get_conn
     conn = get_conn()
     c = conn.cursor()
     c.execute('SELECT file_path FROM proposals WHERE id = ?', (prop_id,))
