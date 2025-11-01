@@ -7,7 +7,7 @@ import config
 load_dotenv()
 NSFW_API_KEY = os.getenv('NSFW_API_KEY')
 
-async def is_image_nsfw(image_path: str) -> bool:
+async def detect_nsfw(image_path: str) -> bool:
     """AI NSFW detection via api4.ai (98% accuracy)"""
     if not NSFW_API_KEY:
         print("NSFW_API_KEY не найден — пропускаем AI-фильтр")
