@@ -3,8 +3,8 @@ import aiohttp
 import cv2
 import numpy as np
 from PIL import Image
+from utils.ai_filter import is_image_nsfw
 from datetime import datetime, timedelta
-from utils.ai_filter import detect_nsfw
 import config
 
 async def download_file(bot, file_id, dest_path):
@@ -69,4 +69,4 @@ def get_file_age_days(file_path):
 
 
 async def is_image_nsfw(image_path):  # Теперь async!
-    return await detect_nsfw(image_path)
+    return await is_image_nsfw(image_path)

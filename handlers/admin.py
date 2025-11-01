@@ -9,7 +9,7 @@ from utils.db import get_user_role
 from aiogram.types import FSInputFile
 from posting import post_from_folder, post_batch_from_multiple_sources
 from backup import create_backup_channel, run_backup_cycle
-from download import download_channel_history
+from utils.download import download_channel_history
 from stats import send_stats_report, send_top_users
 from roles import is_admin, init_admin, set_user_role
 import config

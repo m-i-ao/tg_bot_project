@@ -12,3 +12,4 @@ flask
 flask-admin
 requests
 python-jose[cryptography]
+aiosqlite

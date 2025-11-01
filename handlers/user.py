@@ -2,11 +2,24 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import Command
 from utils.db import add_proposal, get_user_role, set_user_role
-from utils import download_file
+from utils.download import download_file
 from posting import post_single_photo
 import config
 import os
 from utils.db import update_proposal_status
+from aiogram import types, Router
+from aiogram.filters import Command
+from utils.download import download_file  # ← ИСПРАВЛЕНО
+from utils.db import get_user, update_user
+
+router = Router()
+
+@router.message(Command("start"))
+async def start(message: types.Message):
+    user = await get_user(message.from_user.id)
+    if not user:
+        await update_user(message.from_user.id, message.from_user.username or "unknown")
+    await message.answer("Привет! Отправь фото или видео для модерации.")
 
 router = Router()
 
