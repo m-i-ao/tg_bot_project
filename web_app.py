@@ -1,66 +1,57 @@
-from flask import Flask, render_template, request, jsonify, session
-from flask_admin import Admin, AdminIndexView
-from flask_admin.contrib.sqla import ModelView
-from aiogram import Bot
-import config
-from utils.db import get_conn, get_pending_proposals, update_proposal_status
-from stats import generate_stats_graph
-from posting import post_single_photo
-import os
-import sqlite3
-
-app = Flask(__name__)
-app.secret_key = os.getenv('WEB_PANEL_SECRET', 'devkey')
-
-bot = Bot(token=config.BOT_TOKEN)
-
-# Flask-Admin
+from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
+
+# === ПУТЬ К БАЗЕ ===
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "bot.db")
+
+# === FLASK ===
+app = Flask(__name__)
+
+# === КОНФИГ ДО SQLALCHEMY ===
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# === SQLALCHEMY ПОСЛЕ КОНФИГА ===
 db = SQLAlchemy(app)
-# Подключи DB (упрощённо для admin)
 
-class MyAdminIndexView(AdminIndexView):
-    def is_accessible(self):
-        return session.get('logged_in')
+# === МОДЕЛЬ ===
+class Proposal(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    file_id = db.Column(db.String)
+    file_type = db.Column(db.String)
+    status = db.Column(db.String, default='pending')
+    timestamp = db.Column(db.String)
 
-admin = Admin(app, name='Bot Panel', index_view=MyAdminIndexView())
+# === МАРШРУТЫ ===
+@app.route('/')
+def index():
+    proposals = Proposal.query.filter_by(status='pending').all()
+    return render_template('admin.html', proposals=proposals)
 
-# === ВЕБ-ПАНЕЛЬ ===
-@app.route('/admin')
-def admin_dashboard():
-    if not session.get('logged_in'):
-        return '<form method=post><input name=password placeholder="Пароль админа"><button>Войти</button></form>'
-    proposals = get_pending_proposals()
-    graph = generate_stats_graph()
-    return render_template('admin.html', proposals=proposals, graph=graph)
-
-@app.route('/admin/login', methods=['POST'])
-def login():
-    if request.form['password'] == 'admin123':  # Измени!
-        session['logged_in'] = True
-    return 'OK'  # Redirect JS
-
-@app.route('/admin/approve/<int:prop_id>')
+@app.route('/approve/<int:prop_id>')
 def approve(prop_id):
-    update_proposal_status(prop_id, 'approved')
-    # Постинг
-    conn = get_conn()
-    c = conn.cursor()
-    c.execute('SELECT file_path FROM proposals WHERE id=?', (prop_id,))
-    path = c.fetchone()[0]
-    post_single_photo(bot, path)
-    os.remove(path)
-    conn.close()
-    return jsonify({'status': 'approved'})
+    prop = Proposal.query.get(prop_id)
+    if prop:
+        prop.status = 'approved'
+        db.session.commit()
+    return redirect(url_for('index'))
 
-# === API для MINI APP ===
-@app.route('/api/proposals')
-def api_proposals():
-    return jsonify(get_pending_proposals())
+@app.route('/reject/<int:prop_id>')
+def reject(prop_id):
+    prop = Proposal.query.get(prop_id)
+    if prop:
+        prop.status = 'rejected'
+        db.session.commit()
+    return redirect(url_for('index'))
 
-@app.route('/api/stats')
-def api_stats():
-    return jsonify({'posts': 42, 'views': 1234})  # Из DB
+# === ЗАПУСК ===
+def run_flask():
+    with app.app_context():
+        db.create_all()
+    app.run(port=5000, debug=False, use_reloader=False)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    run_flask()
