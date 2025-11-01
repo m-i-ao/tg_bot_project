@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from utils.utils import is_image_nsfw, get_file_age_days
+from utils.ai_filter import is_image_nsfw, get_file_age_days
 import config
 from typing import List
 

@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image
 from datetime import datetime, timedelta
-from ai_filter import detect_nsfw
+from utils.ai_filter import detect_nsfw
 import config
 
 async def download_file(bot, file_id, dest_path):
